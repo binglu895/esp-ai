@@ -80,8 +80,10 @@ function main(config = {}) {
         global.G_max_buffered_amount = 1024 * 4;  
         
         global.G_ws_server = null;
+        console.log(_config)
         global.G_config = { ..._config, ...config };
-
+        console.log(global.G_config)
+        
         log.info(`服务端口：${G_config.port}`);
         log.info(`服务插件：${G_config.plugins ? G_config.plugins.map(item=> item.name).join(" | ") : "-"}`); 
  
