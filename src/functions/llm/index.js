@@ -34,6 +34,7 @@ const delay = require("../../utils/delay");
 async function cb(device_id, { text, is_over, texts, session_id, shouldClose }) {
     try {
         const { devLog, onLLMcb } = G_config;
+        console.log(onLLMcb);
         const TTS_FN = require(`../tts`);
         const {
             llm_historys = [], ws: ws_client, start_iat, llm_ws, await_out_tts, await_out_tts_run, add_audio_out_over_queue,
