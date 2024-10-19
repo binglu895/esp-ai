@@ -1,0 +1,433 @@
+<article id="article" class="article zib-widget forum-article relative" style="min-height: 393px;"><div class="article-header clearfix"><h1 class="article-title"><a href="https://www.qingningz.cn/forum-post/2312.html" title="ESP-AI成神之路——服务端自建复刻">ESP-AI成神之路——服务端自建复刻</a></h1><div class="flex ac jsb forum-article-meta"><div class="meta-left"><name class=""><a class="display-name text-ellipsis focus-color" href="https://www.qingningz.cn/archives/author/1">云端有个小卖铺</a><icon data-toggle="tooltip" title="" class="user-auth-icon ml3" data-original-title="帅逼管理员"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-user-auth"></use></svg></icon><img class="ml3 img-icon medal-icon lazyloaded lazyloadafter" src="https://www.qingningz.cn/wp-content/themes/zibll/img//medal/medal-8.svg" data-src="https://www.qingningz.cn/wp-content/themes/zibll/img//medal/medal-8.svg" data-toggle="tooltip" title="" alt="徽章-原创达人-青柠博客" data-original-title="原创达人"><img class="img-icon ml3 lazyloaded lazyloadafter" src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2023/01/LV10.svg" data-src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2023/01/LV10.svg" data-toggle="tooltip" title="" alt="等级-LV10-青柠博客" data-original-title="LV10"></name><span class="icon-spot"><span data-toggle="tooltip" data-placement="bottom" title="" data-original-title="2024年09月26日 16:48发布">23天前更新</span></span></div><div class="meta-right"><item class="item item-view"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-view"></use></svg>112</item><a class="item item-comment" href="javascript:(scrollTo('#commentform',-100));"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-comment"></use></svg>0</a></div></div></div><div class="theme-box wp-posts-content limit-height" data-nav="posts" style="" data-maxheight="920"><h2 id="wznav_0">服务端搭建说明</h2>
+<div class="quote_q quote-mce qe_wzk_c-red" mce-contenteditable="false">
+<div mce-contenteditable="true">
+<p>搭建之前必须满足两点</p>
+<p>nodejs版本：v18.20.4</p>
+<p>npm&nbsp; &nbsp;版本：9.3.1</p>
+</div>
+</div>
+<p>如果你的npm版本不是9.3.1，请用下面命令安装以下</p>
+<pre class="enlighter-pre" mce-contenteditable="false"><div class="enlighter-default enlighter-v-standard enlighter-t-monokai enlighter-hover enlighter-linenumbers enlighter-overflow-scroll"><div class="enlighter-toolbar"><div class="enlighter-btn enlighter-btn-raw"></div><div class="enlighter-btn enlighter-btn-copy"></div><div class="enlighter-btn enlighter-btn-window"></div></div><div class="enlighter" style=""><div class=""><div><span class="enlighter-text">npm install -g npm@</span><span class="enlighter-n0">9.3</span><span class="enlighter-text">.</span><span class="enlighter-m3">1</span><span class="enlighter-text"> --registry=https</span><span class="enlighter-c0">://registry.npm.taobao.org  --strict-ssl=false</span></div></div></div><pre class="enlighter-raw">npm install -g npm@9.3.1 --registry=https://registry.npm.taobao.org  --strict-ssl=false</pre></div><code class="gl enlighter-origin">npm install -g npm@9.3.1 --registry=https://registry.npm.taobao.org  --strict-ssl=false</code></pre>
+<h3 id="wznav_1">创建配置文件</h3>
+<p>随便创建一个文件夹，并在这个文件夹里创建index.js，比如我创建了一个espai文件夹</p>
+<p><img decoding="async" src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918192326216-image.png" data-src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918192326216-image.png" alt="20240918192326216-image" data-edit-file-id="2253" data-full-url="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918192326216-image.png" class="ls-is-cached lazyloaded lazyloadafter" imgbox-index="0"></p>
+<p>我们用vscode打开目录，为了方便，我去掉了官方多余注释，并且这里以<span style="color: #ff0000;">讯飞</span>平台作为演示，这样代码看起来更加简洁</p>
+<pre class="enlighter-pre" mce-contenteditable="false"><div class="enlighter-default enlighter-v-standard enlighter-t-monokai enlighter-hover enlighter-linenumbers enlighter-overflow-scroll"><div class="enlighter-toolbar"><div class="enlighter-btn enlighter-btn-raw"></div><div class="enlighter-btn enlighter-btn-copy"></div><div class="enlighter-btn enlighter-btn-window"></div></div><div class="enlighter" style=""><div class=""><div><span class="enlighter-k2">const</span><span class="enlighter-text"> espAi = </span><span class="enlighter-m0">require</span><span class="enlighter-g1">(</span><span class="enlighter-s0">"esp-ai"</span><span class="enlighter-g1">)</span><span class="enlighter-text">; </span></div></div><div class=""><div><span class="enlighter-text"></span><span class="enlighter-k2">const</span><span class="enlighter-text"> config = </span><span class="enlighter-g1">{</span><span class="enlighter-text"> </span></div></div><div class=""><div><span class="enlighter-text">    </span><span class="enlighter-c1">/**</span></div></div><div class=""><div><span class="enlighter-c1">     * 可以根据业务需求用这个方法去库中请求配置等...</span></div></div><div class=""><div><span class="enlighter-c1">     * 客户端配置生成，主要是生成 IAT/LLM/TTS 配置。客户端首次连接时会执行或者在某个空闲时刻内部会有自动更新策略 </span></div></div><div class=""><div><span class="enlighter-c1">     * @param {object} params 参数为客户端中配置的参数， 这里会解析为字面量对象，开发者直接使用 key 方式引用即可。 </span></div></div><div class=""><div><span class="enlighter-c1">     */</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">    gen_client_config: </span><span class="enlighter-g1">(</span><span class="enlighter-text">params</span><span class="enlighter-g1">)</span><span class="enlighter-k3">=&gt;</span><span class="enlighter-g1">{</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">        </span><span class="enlighter-k0">return</span><span class="enlighter-text"> </span><span class="enlighter-g1">{</span><span class="enlighter-text"> </span></div></div><div class=""><div><span class="enlighter-text">            iat_server: </span><span class="enlighter-s0">"xun_fei"</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text">           </span><span class="enlighter-c0"> // iat_server: "esp-ai-plugin-iat-example", // 插件</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">            iat_config: </span><span class="enlighter-g1">{</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">               </span><span class="enlighter-c0"> // 讯飞：https://console.xfyun.cn/services/iat  。打开网址后，右上角三个字段复制进来即可。</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">                appid: </span><span class="enlighter-s0">""</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text">                apiSecret: </span><span class="enlighter-s0">""</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text">                apiKey: </span><span class="enlighter-s0">""</span><span class="enlighter-text">, </span></div></div><div class=""><div><span class="enlighter-text">               </span><span class="enlighter-c0"> // 静默时间，多少时间检测不到说话就算结束，单位 ms</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">                vad_eos: </span><span class="enlighter-n1">1500</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">            </span><span class="enlighter-g1">}</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">            llm_server: </span><span class="enlighter-s0">"xun_fei"</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text">            </span></div></div><div class=""><div><span class="enlighter-text">            llm_config: </span><span class="enlighter-g1">{</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">               </span><span class="enlighter-c0"> // 讯飞：https://console.xfyun.cn/services/iat  。打开网址后，右上角三个字段复制进来即可。</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">                appid: </span><span class="enlighter-s0">""</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text">                apiSecret: </span><span class="enlighter-s0">""</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text">                apiKey: </span><span class="enlighter-s0">""</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text">                llm: </span><span class="enlighter-s0">"v4.0"</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text">            </span><span class="enlighter-g1">}</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">            tts_server: </span><span class="enlighter-s0">"xun_fei"</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text">            </span></div></div><div class=""><div><span class="enlighter-text">            tts_config: </span><span class="enlighter-g1">{</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">               </span><span class="enlighter-c0"> // 讯飞：https://console.xfyun.cn/services/iat  。打开网址后，右上角三个字段复制进来即可。</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">                appid: </span><span class="enlighter-s0">""</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text">                apiSecret: </span><span class="enlighter-s0">""</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text">                apiKey: </span><span class="enlighter-s0">""</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text"> </span></div></div><div class=""><div><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">                </span></div></div><div class=""><div><span class="enlighter-text">            </span><span class="enlighter-g1">}</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text">            </span></div></div><div class=""><div><span class="enlighter-text">            </span><span class="enlighter-c1">/**</span></div></div><div class=""><div><span class="enlighter-c1">             * LLM 初始化提示词</span></div></div><div class=""><div><span class="enlighter-c1">            */</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">            llm_init_messages: </span><span class="enlighter-g1">[</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">                </span><span class="enlighter-g1">{</span><span class="enlighter-text"> role: </span><span class="enlighter-s0">'system'</span><span class="enlighter-text">, content: </span><span class="enlighter-s0">'你是小明同学，是一个无所不能的智能助手。'</span><span class="enlighter-text"> </span><span class="enlighter-g1">}</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text">            </span><span class="enlighter-g1">]</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">            </span></div></div><div class=""><div><span class="enlighter-text">            </span><span class="enlighter-c1">/**</span></div></div><div class=""><div><span class="enlighter-c1">             * 意图表：当用户唤醒 小明同学 后，小明同学可以做下面的任务</span></div></div><div class=""><div><span class="enlighter-c1">            */</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">            intention: </span><span class="enlighter-g1">[</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">                </span><span class="enlighter-g1">{</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">                   </span><span class="enlighter-c0"> // 关键词</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">                    key: </span><span class="enlighter-g1">[</span><span class="enlighter-s0">"帮我开灯"</span><span class="enlighter-text">, </span><span class="enlighter-s0">"开灯"</span><span class="enlighter-text">, </span><span class="enlighter-s0">"打开灯"</span><span class="enlighter-g1">]</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text">                   </span><span class="enlighter-c0"> // 向客户端发送的指令</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">                    instruct: </span><span class="enlighter-s0">"device_open_001"</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text">                    message: </span><span class="enlighter-s0">"开啦！还有什么需要帮助的吗？"</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">                </span><span class="enlighter-g1">}</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text">                </span><span class="enlighter-g1">{</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">                   </span><span class="enlighter-c0"> // 关键词</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">                    key: </span><span class="enlighter-g1">[</span><span class="enlighter-s0">"帮我关灯"</span><span class="enlighter-text">, </span><span class="enlighter-s0">"关灯"</span><span class="enlighter-text">, </span><span class="enlighter-s0">"关闭灯"</span><span class="enlighter-g1">]</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text">                   </span><span class="enlighter-c0"> // 向客户端发送的指令</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">                    instruct: </span><span class="enlighter-s0">"device_close_001"</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text">                    message: </span><span class="enlighter-s0">"关啦！还有什么需要帮助的吗？"</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">                </span><span class="enlighter-g1">}</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text">                </span><span class="enlighter-g1">{</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">                   </span><span class="enlighter-c0"> // 关键词</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">                    key: </span><span class="enlighter-g1">[</span><span class="enlighter-s0">"退下吧"</span><span class="enlighter-text">, </span><span class="enlighter-s0">"退下"</span><span class="enlighter-g1">]</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text">                   </span><span class="enlighter-c0"> // 内置的睡眠指令</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">                    instruct: </span><span class="enlighter-s0">"__sleep__"</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text">                    message: </span><span class="enlighter-s0">"我先退下了，有需要再叫我。"</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">                </span><span class="enlighter-g1">}</span><span class="enlighter-text">, </span></div></div><div class=""><div><span class="enlighter-text">                </span><span class="enlighter-g1">{</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">                    </span><span class="enlighter-c1">/**</span></div></div><div class=""><div><span class="enlighter-c1">                     * 正则匹配</span></div></div><div class=""><div><span class="enlighter-c1">                     * 如：播放音乐最后的倔强  </span></div></div><div class=""><div><span class="enlighter-c1">                     * 返回匹配的字符串为匹配成功</span></div></div><div class=""><div><span class="enlighter-c1">                    */</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">                    key: </span><span class="enlighter-k0">async</span><span class="enlighter-text"> </span><span class="enlighter-g1">(</span><span class="enlighter-text">text = </span><span class="enlighter-s0">""</span><span class="enlighter-text">, llm_historys</span><span class="enlighter-g1">)</span><span class="enlighter-text"> </span><span class="enlighter-k3">=&gt;</span><span class="enlighter-text"> </span><span class="enlighter-g1">{</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">                        </span><span class="enlighter-k2">const</span><span class="enlighter-text"> regex = </span><span class="enlighter-e2">/^(播放音乐)(.*)$/</span><span class="enlighter-text">;</span></div></div><div class=""><div><span class="enlighter-text">                        </span><span class="enlighter-k2">const</span><span class="enlighter-text"> match = text.</span><span class="enlighter-m3">match</span><span class="enlighter-g1">(</span><span class="enlighter-text">regex</span><span class="enlighter-g1">)</span><span class="enlighter-text">;</span></div></div><div class=""><div><span class="enlighter-text">                        </span><span class="enlighter-k1">if</span><span class="enlighter-text"> </span><span class="enlighter-g1">(</span><span class="enlighter-text">match</span><span class="enlighter-g1">)</span><span class="enlighter-text"> </span><span class="enlighter-g1">{</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">                            </span><span class="enlighter-k2">const</span><span class="enlighter-text"> songName = match</span><span class="enlighter-g1">[</span><span class="enlighter-n1">2</span><span class="enlighter-g1">]</span><span class="enlighter-text">;</span></div></div><div class=""><div><span class="enlighter-text">                            </span><span class="enlighter-k9">console</span><span class="enlighter-text">.</span><span class="enlighter-m3">log</span><span class="enlighter-g1">(</span><span class="enlighter-s0">"音乐名称:"</span><span class="enlighter-text">, songName</span><span class="enlighter-g1">)</span><span class="enlighter-text">;</span></div></div><div class=""><div><span class="enlighter-text">                            </span><span class="enlighter-k0">return</span><span class="enlighter-text"> songName;</span></div></div><div class=""><div><span class="enlighter-text">                        </span><span class="enlighter-g1">}</span><span class="enlighter-text"> </span><span class="enlighter-k1">else</span><span class="enlighter-text"> </span><span class="enlighter-g1">{</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">                            </span><span class="enlighter-k0">return</span><span class="enlighter-text"> </span><span class="enlighter-e0">false</span><span class="enlighter-text">;</span></div></div><div class=""><div><span class="enlighter-text">                        </span><span class="enlighter-g1">}</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">                    </span><span class="enlighter-g1">}</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text">                   </span><span class="enlighter-c0"> // 向客户端发送的指令</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">                    instruct: </span><span class="enlighter-s0">"__play_music__"</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text">                    message: </span><span class="enlighter-s0">"好的！"</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text">                    </span><span class="enlighter-c1">/**</span></div></div><div class=""><div><span class="enlighter-c1">                     * 用于返回音频地址和播放进度</span></div></div><div class=""><div><span class="enlighter-c1">                     * 目前只支持 mp3、wav 格式</span></div></div><div class=""><div><span class="enlighter-c1">                     * @param {String} name 是歌曲名称</span></div></div><div class=""><div><span class="enlighter-c1">                     * @return {number} seek 进度： （以秒为单位）</span></div></div><div class=""><div><span class="enlighter-c1">                     * @return {message} 找不到数据时的TTS</span></div></div><div class=""><div><span class="enlighter-c1">                    */</span><span class="enlighter-text"> </span></div></div><div class=""><div><span class="enlighter-text">                    music_server: </span><span class="enlighter-k0">async</span><span class="enlighter-text"> </span><span class="enlighter-g1">(</span><span class="enlighter-text">name, </span><span class="enlighter-g1">{</span><span class="enlighter-text"> user_config </span><span class="enlighter-g1">}</span><span class="enlighter-g1">)</span><span class="enlighter-text"> </span><span class="enlighter-k3">=&gt;</span><span class="enlighter-text"> </span><span class="enlighter-g1">{</span><span class="enlighter-text"> </span></div></div><div class=""><div><span class="enlighter-text">                        </span><span class="enlighter-k0">return</span><span class="enlighter-text"> </span><span class="enlighter-g1">{</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">                            url:</span><span class="enlighter-s0">"[https](https://xiaomingio.top/music.mp3)"</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text">                            seek: </span><span class="enlighter-n1">0</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text">                            message: message</span></div></div><div class=""><div><span class="enlighter-text">                        </span><span class="enlighter-g1">}</span><span class="enlighter-text">;</span></div></div><div class=""><div><span class="enlighter-text">                    </span><span class="enlighter-g1">}</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text">                    </span><span class="enlighter-c1">/**</span></div></div><div class=""><div><span class="enlighter-c1">                     * 当音频结束后的回调</span></div></div><div class=""><div><span class="enlighter-c1">                     * @param {object} arg.break_second  停止时的进度，单位秒。也就是用户播放了到了多少秒（seek+play_time）</span></div></div><div class=""><div><span class="enlighter-c1">                     * @param {object} arg.play_time     实际播放音频的时间，单位秒。</span></div></div><div class=""><div><span class="enlighter-c1">                     * @param {object} arg.seek          音频开始播放时间，其实也就是 music_server 函数中返回的 seek 值</span></div></div><div class=""><div><span class="enlighter-c1">                     * @param {object} arg.start_time    开始播放音频的 Unix 毫秒数时间戳</span></div></div><div class=""><div><span class="enlighter-c1">                     * @param {object} arg.end_time      结束播放音频的 Unix 毫秒数时间戳</span></div></div><div class=""><div><span class="enlighter-c1">                     * @param {object} arg.event         结束原因： "user_break" 用户打断 | play_end 播放完毕 | foo 未知事件 </span></div></div><div class=""><div><span class="enlighter-c1">                    */</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">                    on_end: </span><span class="enlighter-g1">(</span><span class="enlighter-text">arg</span><span class="enlighter-g1">)</span><span class="enlighter-text"> </span><span class="enlighter-k3">=&gt;</span><span class="enlighter-text"> </span><span class="enlighter-g1">{</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">                       </span><span class="enlighter-c0"> // 请求业务服务器保存进度信息 ...</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">                        </span><span class="enlighter-k9">console</span><span class="enlighter-text">.</span><span class="enlighter-m3">log</span><span class="enlighter-g1">(</span><span class="enlighter-text">arg</span><span class="enlighter-g1">)</span><span class="enlighter-text">;</span></div></div><div class=""><div><span class="enlighter-text">                    </span><span class="enlighter-g1">}</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">                </span><span class="enlighter-g1">}</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text">            </span><span class="enlighter-g1">]</span><span class="enlighter-text">,</span></div></div><div class=""><div><span class="enlighter-text">        </span><span class="enlighter-g1">}</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">    </span><span class="enlighter-g1">}</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text"></span><span class="enlighter-g1">}</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text"></span><span class="enlighter-m0">espAi</span><span class="enlighter-g1">(</span><span class="enlighter-text">config</span><span class="enlighter-g1">)</span><span class="enlighter-text">;</span></div></div></div><pre class="enlighter-raw">const espAi = require("esp-ai"); 
+const config = { 
+    /**
+     * 可以根据业务需求用这个方法去库中请求配置等...
+     * 客户端配置生成，主要是生成 IAT/LLM/TTS 配置。客户端首次连接时会执行或者在某个空闲时刻内部会有自动更新策略 
+     * @param {object} params 参数为客户端中配置的参数， 这里会解析为字面量对象，开发者直接使用 key 方式引用即可。 
+     */
+    gen_client_config: (params)=&gt;{
+        return { 
+            iat_server: "xun_fei",
+            // iat_server: "esp-ai-plugin-iat-example", // 插件
+            iat_config: {
+                // 讯飞：https://console.xfyun.cn/services/iat  。打开网址后，右上角三个字段复制进来即可。
+                appid: "",
+                apiSecret: "",
+                apiKey: "", 
+                // 静默时间，多少时间检测不到说话就算结束，单位 ms
+                vad_eos: 1500,
+
+            },
+
+            llm_server: "xun_fei",
+            
+            llm_config: {
+                // 讯飞：https://console.xfyun.cn/services/iat  。打开网址后，右上角三个字段复制进来即可。
+                appid: "",
+                apiSecret: "",
+                apiKey: "",
+                llm: "v4.0",
+            },
+
+            tts_server: "xun_fei",
+            
+            tts_config: {
+                // 讯飞：https://console.xfyun.cn/services/iat  。打开网址后，右上角三个字段复制进来即可。
+                appid: "",
+                apiSecret: "",
+                apiKey: "",
+ 
+
+                
+            },
+            
+            /**
+             * LLM 初始化提示词
+            */
+            llm_init_messages: [
+                { role: 'system', content: '你是小明同学，是一个无所不能的智能助手。' },
+            ],
+
+            
+            /**
+             * 意图表：当用户唤醒 小明同学 后，小明同学可以做下面的任务
+            */
+            intention: [
+                {
+                    // 关键词
+                    key: ["帮我开灯", "开灯", "打开灯"],
+                    // 向客户端发送的指令
+                    instruct: "device_open_001",
+                    message: "开啦！还有什么需要帮助的吗？"
+                },
+                {
+                    // 关键词
+                    key: ["帮我关灯", "关灯", "关闭灯"],
+                    // 向客户端发送的指令
+                    instruct: "device_close_001",
+                    message: "关啦！还有什么需要帮助的吗？"
+                },
+                {
+                    // 关键词
+                    key: ["退下吧", "退下"],
+                    // 内置的睡眠指令
+                    instruct: "__sleep__",
+                    message: "我先退下了，有需要再叫我。"
+                }, 
+                {
+                    /**
+                     * 正则匹配
+                     * 如：播放音乐最后的倔强  
+                     * 返回匹配的字符串为匹配成功
+                    */
+                    key: async (text = "", llm_historys) =&gt; {
+                        const regex = /^(播放音乐)(.*)$/;
+                        const match = text.match(regex);
+                        if (match) {
+                            const songName = match[2];
+                            console.log("音乐名称:", songName);
+                            return songName;
+                        } else {
+                            return false;
+                        }
+                    },
+                    // 向客户端发送的指令
+                    instruct: "__play_music__",
+                    message: "好的！",
+                    /**
+                     * 用于返回音频地址和播放进度
+                     * 目前只支持 mp3、wav 格式
+                     * @param {String} name 是歌曲名称
+                     * @return {number} seek 进度： （以秒为单位）
+                     * @return {message} 找不到数据时的TTS
+                    */ 
+                    music_server: async (name, { user_config }) =&gt; { 
+                        return {
+                            url:"[https](https://xiaomingio.top/music.mp3)",
+                            seek: 0,
+                            message: message
+                        };
+                    },
+                    /**
+                     * 当音频结束后的回调
+                     * @param {object} arg.break_second  停止时的进度，单位秒。也就是用户播放了到了多少秒（seek+play_time）
+                     * @param {object} arg.play_time     实际播放音频的时间，单位秒。
+                     * @param {object} arg.seek          音频开始播放时间，其实也就是 music_server 函数中返回的 seek 值
+                     * @param {object} arg.start_time    开始播放音频的 Unix 毫秒数时间戳
+                     * @param {object} arg.end_time      结束播放音频的 Unix 毫秒数时间戳
+                     * @param {object} arg.event         结束原因： "user_break" 用户打断 | play_end 播放完毕 | foo 未知事件 
+                    */
+                    on_end: (arg) =&gt; {
+                        // 请求业务服务器保存进度信息 ...
+                        console.log(arg);
+                    }
+                },
+            ],
+        }
+    }
+}
+espAi(config);</pre></div><code class="gl enlighter-origin" data-enlighter-language="javascript">const espAi = require("esp-ai"); 
+const config = { 
+    /**
+     * 可以根据业务需求用这个方法去库中请求配置等...
+     * 客户端配置生成，主要是生成 IAT/LLM/TTS 配置。客户端首次连接时会执行或者在某个空闲时刻内部会有自动更新策略 
+     * @param {object} params 参数为客户端中配置的参数， 这里会解析为字面量对象，开发者直接使用 key 方式引用即可。 
+     */
+    gen_client_config: (params)=&gt;{
+        return { 
+            iat_server: "xun_fei",
+            // iat_server: "esp-ai-plugin-iat-example", // 插件
+            iat_config: {
+                // 讯飞：https://console.xfyun.cn/services/iat  。打开网址后，右上角三个字段复制进来即可。
+                appid: "",
+                apiSecret: "",
+                apiKey: "", 
+                // 静默时间，多少时间检测不到说话就算结束，单位 ms
+                vad_eos: 1500,
+
+            },
+
+            llm_server: "xun_fei",
+            
+            llm_config: {
+                // 讯飞：https://console.xfyun.cn/services/iat  。打开网址后，右上角三个字段复制进来即可。
+                appid: "",
+                apiSecret: "",
+                apiKey: "",
+                llm: "v4.0",
+            },
+
+            tts_server: "xun_fei",
+            
+            tts_config: {
+                // 讯飞：https://console.xfyun.cn/services/iat  。打开网址后，右上角三个字段复制进来即可。
+                appid: "",
+                apiSecret: "",
+                apiKey: "",
+ 
+
+                
+            },
+            
+            /**
+             * LLM 初始化提示词
+            */
+            llm_init_messages: [
+                { role: 'system', content: '你是小明同学，是一个无所不能的智能助手。' },
+            ],
+
+            
+            /**
+             * 意图表：当用户唤醒 小明同学 后，小明同学可以做下面的任务
+            */
+            intention: [
+                {
+                    // 关键词
+                    key: ["帮我开灯", "开灯", "打开灯"],
+                    // 向客户端发送的指令
+                    instruct: "device_open_001",
+                    message: "开啦！还有什么需要帮助的吗？"
+                },
+                {
+                    // 关键词
+                    key: ["帮我关灯", "关灯", "关闭灯"],
+                    // 向客户端发送的指令
+                    instruct: "device_close_001",
+                    message: "关啦！还有什么需要帮助的吗？"
+                },
+                {
+                    // 关键词
+                    key: ["退下吧", "退下"],
+                    // 内置的睡眠指令
+                    instruct: "__sleep__",
+                    message: "我先退下了，有需要再叫我。"
+                }, 
+                {
+                    /**
+                     * 正则匹配
+                     * 如：播放音乐最后的倔强  
+                     * 返回匹配的字符串为匹配成功
+                    */
+                    key: async (text = "", llm_historys) =&gt; {
+                        const regex = /^(播放音乐)(.*)$/;
+                        const match = text.match(regex);
+                        if (match) {
+                            const songName = match[2];
+                            console.log("音乐名称:", songName);
+                            return songName;
+                        } else {
+                            return false;
+                        }
+                    },
+                    // 向客户端发送的指令
+                    instruct: "__play_music__",
+                    message: "好的！",
+                    /**
+                     * 用于返回音频地址和播放进度
+                     * 目前只支持 mp3、wav 格式
+                     * @param {String} name 是歌曲名称
+                     * @return {number} seek 进度： （以秒为单位）
+                     * @return {message} 找不到数据时的TTS
+                    */ 
+                    music_server: async (name, { user_config }) =&gt; { 
+                        return {
+                            url:"[https](https://xiaomingio.top/music.mp3)",
+                            seek: 0,
+                            message: message
+                        };
+                    },
+                    /**
+                     * 当音频结束后的回调
+                     * @param {object} arg.break_second  停止时的进度，单位秒。也就是用户播放了到了多少秒（seek+play_time）
+                     * @param {object} arg.play_time     实际播放音频的时间，单位秒。
+                     * @param {object} arg.seek          音频开始播放时间，其实也就是 music_server 函数中返回的 seek 值
+                     * @param {object} arg.start_time    开始播放音频的 Unix 毫秒数时间戳
+                     * @param {object} arg.end_time      结束播放音频的 Unix 毫秒数时间戳
+                     * @param {object} arg.event         结束原因： "user_break" 用户打断 | play_end 播放完毕 | foo 未知事件 
+                    */
+                    on_end: (arg) =&gt; {
+                        // 请求业务服务器保存进度信息 ...
+                        console.log(arg);
+                    }
+                },
+            ],
+        }
+    }
+}
+espAi(config);</code></pre>
+<p>我们只关注和修改红框里的代码</p>
+<p><img decoding="async" src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918193514892-image.png" data-src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918193514892-image.png" alt="20240918193514892-image" data-edit-file-id="2255" data-full-url="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918193514892-image.png" class="ls-is-cached lazyloaded lazyloadafter" imgbox-index="1"></p>
+<h3 id="wznav_2">注册讯飞平台</h3>
+<p>注册完成之后，打开这个网址</p>
+<p><a href="https://www.qingningz.cn/?golink=aHR0cHM6Ly9jb25zb2xlLnhmeXVuLmNuL3NlcnZpY2VzL2lhdA==" target="_blank" rel="noopener">https://console.xfyun.cn/services/iat</a></p>
+<p>我们所需要的都在这里</p>
+<p><img decoding="async" src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918193658475-image.png" data-src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918193658475-image.png" alt="20240918193658475-image" data-edit-file-id="2256" data-full-url="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918193658475-image.png" class="ls-is-cached lazyloaded lazyloadafter" imgbox-index="2"></p>
+<div class="quote_q quote-mce qe_wzk_c-red" mce-contenteditable="false">
+<div mce-contenteditable="true">
+<p>注意，这里有一个细节，你可能需要免费开通大模型4.0</p>
+</div>
+</div>
+<p>开通地址：<a href="https://www.qingningz.cn/?golink=aHR0cHM6Ly9jb25zb2xlLnhmeXVuLmNuL3NhbGUvYnV5P3dhcmVJZD05MTI2JmFtcDtwYWNrYWdlSWQ9OTEyNjAwMSZhbXA7c2VydmljZU5hbWU9U3Bhcms0LjAlMjBVbHRyYSZhbXA7YnVzaW5lc3NJZD1ibTQ=" target="_blank" rel="noopener">https://console.xfyun.cn/sale/buy?wareId=9126&amp;packageId=9126001&amp;serviceName=Spark4.0%20Ultra&amp;businessId=bm4</a></p>
+<p><img decoding="async" src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918193944418-image.png" data-src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918193944418-image.png" alt="20240918193944418-image" data-edit-file-id="2257" data-full-url="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918193944418-image.png" class="ls-is-cached lazyloaded lazyloadafter" imgbox-index="3"></p>
+<h3 id="wznav_3">修改配置文件</h3>
+<p>回到代码中，将<span style="color: var(--main-color);"><span style="color: #ff0000;">APPID</span>，</span><span style="color: var(--main-color);"><span style="color: #ff0000;">APISecret</span>，</span><span style="color: #ff0000;">APIKey </span>复制到代码中</p>
+<p><img decoding="async" src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918194402209-image.png" data-src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918194402209-image.png" alt="20240918194402209-image" data-edit-file-id="2258" data-full-url="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918194402209-image.png" class="ls-is-cached lazyloaded lazyloadafter" imgbox-index="4"></p>
+<h3 id="wznav_4">安装依赖并启动服务</h3>
+<pre class="enlighter-pre" mce-contenteditable="false"><div class="enlighter-default enlighter-v-standard enlighter-t-monokai enlighter-hover enlighter-linenumbers enlighter-overflow-scroll"><div class="enlighter-toolbar"><div class="enlighter-btn enlighter-btn-raw"></div><div class="enlighter-btn enlighter-btn-copy"></div><div class="enlighter-btn enlighter-btn-window"></div></div><div class="enlighter" style=""><div class=""><div><span class="enlighter-text">npm install esp-ai  --registry=https</span><span class="enlighter-c0">://registry.npm.taobao.org  --strict-ssl=false</span></div></div></div><pre class="enlighter-raw">npm install esp-ai  --registry=https://registry.npm.taobao.org  --strict-ssl=false</pre></div><code class="gl enlighter-origin">npm install esp-ai  --registry=https://registry.npm.taobao.org  --strict-ssl=false</code></pre>
+<p>回到文件夹中，点击这里输入<span style="color: #ff0000;">cmd</span>回车</p>
+<p><img decoding="async" src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918194551462-image.png" data-src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918194551462-image.png" alt="20240918194551462-image" data-edit-file-id="2259" data-full-url="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918194551462-image.png" class="ls-is-cached lazyloaded lazyloadafter" imgbox-index="5"></p>
+<p><img decoding="async" src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918194639711-image.png" data-src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918194639711-image.png" alt="20240918194639711-image" data-edit-file-id="2260" data-full-url="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918194639711-image.png" class="ls-is-cached lazyloaded lazyloadafter" imgbox-index="6"></p>
+<p>出现上面界面就表示成功了</p>
+<h3 id="wznav_5">启动服务</h3>
+<pre class="enlighter-pre" mce-contenteditable="false"><div class="enlighter-default enlighter-v-standard enlighter-t-monokai enlighter-hover enlighter-linenumbers enlighter-overflow-scroll"><div class="enlighter-toolbar"><div class="enlighter-btn enlighter-btn-raw"></div><div class="enlighter-btn enlighter-btn-copy"></div><div class="enlighter-btn enlighter-btn-window"></div></div><div class="enlighter" style=""><div class=""><div><span class="enlighter-text">node ./index.</span><span class="enlighter-m3">js</span></div></div></div><pre class="enlighter-raw">node ./index.js</pre></div><code class="gl enlighter-origin">node ./index.js</code></pre>
+<p>到现在为止，服务端搭建完成</p>
+<div class="auth-info" data-v-ca047580="">
+<div class="value" data-v-ca047580="">
+<p><img decoding="async" src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918195620653-image.png" data-src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918195620653-image.png" alt="20240918195620653-image" data-edit-file-id="2261" data-full-url="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918195620653-image.png" class="ls-is-cached lazyloaded lazyloadafter" imgbox-index="7"></p>
+<p>如果你想使用docker快速搭建，可以参考这篇文章</p>
+<div class="article-postsbox relative-h radius8">
+            <div class="abs-blur-bg"><img decoding="async" src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240912133548284-image.png" data-src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240912133548284-image.png" alt="ESP-AI成神之路——服务端自建复刻（docker版本）-青柠博客" class="fit-cover radius8 no-imgbox ls-is-cached lazyloaded lazyloadafter"></div>
+            <div class="posts-mini posts-item relative">
+            <div class="mr10"><div class="item-thumbnail"><a href="https://www.qingningz.cn/forum-post/2313.html"><img decoding="async" src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240912133548284-image.png" data-src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240912133548284-image.png" alt="ESP-AI成神之路——服务端自建复刻（docker版本）-青柠博客" class="fit-cover radius8 no-imgbox ls-is-cached lazyloaded lazyloadafter"></a></div></div>
+                <div class="posts-mini-con flex xx flex1 jsb">
+                    <div class="item-heading text-ellipsis-2 main-color">
+                        <a class="main-color" href="https://www.qingningz.cn/forum-post/2313.html">ESP-AI成神之路——服务端自建复刻（docker版本）</a>
+                    </div>
+                    <div class="item-meta muted-2-color flex jsb ac"><item class="meta-author flex ac"><a href="https://www.qingningz.cn/archives/author/1"><span class="avatar-mini"><img decoding="async" alt="云端有个小卖铺的头像-青柠博客" src="//zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2021/04/20210409090346483.jpg" data-src="//zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2021/04/20210409090346483.jpg" class="avatar avatar-id-1 ls-is-cached lazyloaded lazyloadafter"></span></a><span title="2024-09-26 16:50:12" class="ml6">23天前</span></item><div class="meta-right"><item class="meta-comm"><a rel="nofollow" data-toggle="tooltip" title="" href="https://www.qingningz.cn/forum-post/2313.html#respond" data-original-title="去评论"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-comment"></use></svg>0</a></item><item class="meta-view"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-view"></use></svg>40</item></div></div>
+                </div>
+                </div>
+            </div>
+</div>
+</div>
+<h2 id="wznav_6">客户端搭建说明</h2>
+<div class="quote_q quote-mce qe_wzk_c-red" mce-contenteditable="false">
+<div mce-contenteditable="true">
+<p>Arduino IDE：最新版即可</p>
+<p>Arduino IDE esp32插件： 2.x</p>
+</div>
+</div>
+<p><img decoding="async" src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240919201527292-image.png" data-src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240919201527292-image.png" alt="20240919201527292-image" data-edit-file-id="2294" data-full-url="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240919201527292-image.png" class="ls-is-cached lazyloaded lazyloadafter" imgbox-index="8"></p>
+<h3 id="wznav_7">Arduino IDE环境搭建</h3>
+<p>参考这篇文章</p>
+<div class="article-postsbox relative-h radius8">
+            <div class="abs-blur-bg"><img decoding="async" src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240909223958138-QQ20240909-223943.png" data-src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240909223958138-QQ20240909-223943.png" alt="Arduino IDE+Esp32环境搭建-青柠博客" class="fit-cover radius8 no-imgbox ls-is-cached lazyloaded lazyloadafter"></div>
+            <div class="posts-mini posts-item relative">
+            <div class="mr10"><div class="item-thumbnail"><a href="https://www.qingningz.cn/archives/2199"><img decoding="async" src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240909223958138-QQ20240909-223943.png" data-src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240909223958138-QQ20240909-223943.png" alt="Arduino IDE+Esp32环境搭建-青柠博客" class="fit-cover radius8 no-imgbox ls-is-cached lazyloaded lazyloadafter"></a></div></div>
+                <div class="posts-mini-con flex xx flex1 jsb">
+                    <div class="item-heading text-ellipsis-2 main-color">
+                        <a class="main-color" href="https://www.qingningz.cn/archives/2199">Arduino IDE+Esp32环境搭建</a>
+                    </div>
+                    <div class="item-meta muted-2-color flex jsb ac"><item class="meta-author flex ac"><a href="https://www.qingningz.cn/archives/author/1"><span class="avatar-mini"><img decoding="async" alt="云端有个小卖铺的头像-青柠博客" src="//zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2021/04/20210409090346483.jpg" data-src="//zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2021/04/20210409090346483.jpg" class="avatar avatar-id-1 ls-is-cached lazyloaded lazyloadafter"></span></a><span title="2024-09-09 22:52:43" class="ml6">39天前</span></item><div class="meta-right"><item class="meta-comm"><a rel="nofollow" data-toggle="tooltip" title="" href="https://www.qingningz.cn/archives/2199#respond" data-original-title="去评论"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-comment"></use></svg>0</a></item><item class="meta-view"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-view"></use></svg>63</item><item class="meta-like"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-like"></use></svg>0</item></div></div>
+                </div>
+                </div>
+            </div>
+<h3 id="wznav_8">安装库文件</h3>
+<p>所有需要的文件都在这里</p>
+<p><a href="https://www.qingningz.cn/?golink=aHR0cHM6Ly93d3cuMTIzcGFuLmNvbS9zL2k1aDBWdi1FeDd0dg==" target="_blank" rel="noopener">https://www.123pan.com/s/i5h0Vv-Ex7tv</a></p>
+<p><img decoding="async" src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918202043806-image.png" data-src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918202043806-image.png" alt="20240918202043806-image" data-edit-file-id="2267" data-full-url="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918202043806-image.png" class="ls-is-cached lazyloaded lazyloadafter" imgbox-index="9"></p>
+<p>将这些文件全部导入Arduino IDE</p>
+<p>依次点击&nbsp; 项目=》导入库=》添加.ZIP库</p>
+<h3 id="wznav_9">代码编译</h3>
+<ol>
+<li>创建一个文件&nbsp;<code>example/example.ino</code>&nbsp;，注意：文件必须放到一个文件夹里，文件夹名字必须和文件一样</li>
+<li>用&nbsp;<code>Arduino IDE</code>&nbsp;打开&nbsp;<code>example.ino</code>&nbsp;文件</li>
+<li><span style="color: #ff0000;">写入下面代码</span>，然后上传到开发板中，<span style="color: #ff0000;">一定是下面代码，修改你的wifi账号和密码，并且将服务配置填写为你的ip和端口</span></li>
+</ol>
+<pre class="enlighter-pre" mce-contenteditable="false"><div class="enlighter-default enlighter-v-standard enlighter-t-monokai enlighter-hover enlighter-linenumbers enlighter-overflow-scroll"><div class="enlighter-toolbar"><div class="enlighter-btn enlighter-btn-raw"></div><div class="enlighter-btn enlighter-btn-copy"></div><div class="enlighter-btn enlighter-btn-window"></div></div><div class="enlighter" style=""><div class=""><div><span class="enlighter-c0">#include &lt;esp-ai.h&gt;</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">ESP_AI esp_ai;</span></div></div><div class=""><div><span class="enlighter-text"> </span></div></div><div class=""><div><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text"></span><span class="enlighter-k1">void</span><span class="enlighter-text"> </span><span class="enlighter-m0">setup</span><span class="enlighter-g1">()</span><span class="enlighter-text"> </span><span class="enlighter-g1">{</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">  Serial.</span><span class="enlighter-m3">begin</span><span class="enlighter-g1">(</span><span class="enlighter-n1">115200</span><span class="enlighter-g1">)</span><span class="enlighter-text">;</span></div></div><div class=""><div><span class="enlighter-text"> </span><span class="enlighter-c0"> // [必  填] 是否调试模式， 会输出更多信息</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">  bool debug = </span><span class="enlighter-k1">true</span><span class="enlighter-text">;</span></div></div><div class=""><div><span class="enlighter-text"> </span><span class="enlighter-c0"> // [必  填] wifi 配置： { wifi 账号， wifi 密码 }  注意：要用双引号！</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">  ESP_AI_wifi_config wifi_config = </span><span class="enlighter-g1">{</span><span class="enlighter-text"> </span><span class="enlighter-s0">"Xiaomi_FANFAN"</span><span class="enlighter-text">, </span><span class="enlighter-s0">"yangfan0522"</span><span class="enlighter-text">, </span><span class="enlighter-s0">"ESP-AI"</span><span class="enlighter-text">  </span><span class="enlighter-g1">}</span><span class="enlighter-text">;</span></div></div><div class=""><div><span class="enlighter-text"> </span><span class="enlighter-c0"> // 用开发者平台，只需要配置为空</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text"> </span><span class="enlighter-c0"> //ESP_AI_server_config server_config = { };</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text"> </span><span class="enlighter-c0"> // [必  填] 服务配置： { 服务IP， 服务端口, "请求参数，用多个参数&amp;号分割" }</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">  ESP_AI_server_config server_config = </span><span class="enlighter-g1">{</span><span class="enlighter-text"> </span><span class="enlighter-s0">"192.168.31.108"</span><span class="enlighter-text">, </span><span class="enlighter-n1">8088</span><span class="enlighter-text">, </span><span class="enlighter-s0">"api-key=your_api_key&amp;p2=test"</span><span class="enlighter-text"> </span><span class="enlighter-g1">}</span><span class="enlighter-text">;</span></div></div><div class=""><div><span class="enlighter-text"> </span><span class="enlighter-c0"> // [必  填] 离线唤醒方案：{ 方案, 识别阈值 }, "edge_impulse" | "diy"，为 "diy" 时可调用 esp_ai.wakeUp() 方法进行唤醒</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">  ESP_AI_wake_up_config wake_up_config = </span><span class="enlighter-g1">{}</span><span class="enlighter-text">;</span></div></div><div class=""><div><span class="enlighter-text">  </span><span class="enlighter-m0">strcpy</span><span class="enlighter-g1">(</span><span class="enlighter-text">wake_up_config.</span><span class="enlighter-m3">wake_up_scheme</span><span class="enlighter-text">, </span><span class="enlighter-s0">"asrpro"</span><span class="enlighter-g1">)</span><span class="enlighter-text">; </span><span class="enlighter-c0"> // 唤醒方案</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">  </span><span class="enlighter-m0">strcpy</span><span class="enlighter-g1">(</span><span class="enlighter-text">wake_up_config.</span><span class="enlighter-m3">str</span><span class="enlighter-text">, </span><span class="enlighter-s0">"start"</span><span class="enlighter-g1">)</span><span class="enlighter-text">;             </span><span class="enlighter-c0"> // 串口和天问asrpro 唤醒时需要配置的字符串，也就是从另一个开发版发送来的字符串</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text"> </span><span class="enlighter-c0"> // strcpy(wake_up_config.threshold,  0.95);  //  内置语音唤醒时需要配置 唤醒阈值 0-1</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text"> </span><span class="enlighter-c0"> //strcpy(wake_up_config.str, "10");  // 引脚高低电平唤醒时需要的引脚IO</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text"> </span><span class="enlighter-c0"> // [可留空] 麦克风引脚配置：{ bck_io_num, ws_io_num, data_in_num }</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">  ESP_AI_i2s_config_mic i2s_config_mic = </span><span class="enlighter-g1">{</span><span class="enlighter-text"> </span><span class="enlighter-n1">4</span><span class="enlighter-text">, </span><span class="enlighter-n1">5</span><span class="enlighter-text">, </span><span class="enlighter-n1">6</span><span class="enlighter-text"> </span><span class="enlighter-g1">}</span><span class="enlighter-text">;</span></div></div><div class=""><div><span class="enlighter-text"> </span><span class="enlighter-c0"> // [可留空] 扬声器引脚配置：{ bck_io_num, ws_io_num, data_in_num, 采样率 }</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">  ESP_AI_i2s_config_speaker i2s_config_speaker = </span><span class="enlighter-g1">{</span><span class="enlighter-text"> </span><span class="enlighter-n1">16</span><span class="enlighter-text">, </span><span class="enlighter-n1">17</span><span class="enlighter-text">, </span><span class="enlighter-n1">15</span><span class="enlighter-text">, </span><span class="enlighter-n1">16000</span><span class="enlighter-text"> </span><span class="enlighter-g1">}</span><span class="enlighter-text">;</span></div></div><div class=""><div><span class="enlighter-text"> </span><span class="enlighter-c0"> // [可留空] 音量调节配置：{ 输入引脚，输入最大值(1024|4096)，默认音量(0-1) }</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">  ESP_AI_volume_config volume_config = </span><span class="enlighter-g1">{</span><span class="enlighter-text"> </span><span class="enlighter-n1">34</span><span class="enlighter-text">, </span><span class="enlighter-n1">4096</span><span class="enlighter-text">, </span><span class="enlighter-n1">1</span><span class="enlighter-text"> </span><span class="enlighter-g1">}</span><span class="enlighter-text">;</span></div></div><div class=""><div><span class="enlighter-text"> </span><span class="enlighter-c0"> // 开始运行 ESP-AI </span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">  esp_ai.</span><span class="enlighter-m3">begin</span><span class="enlighter-g1">({</span><span class="enlighter-text">debug, wifi_config, server_config, wake_up_config, volume_config, i2s_config_mic, i2s_config_speaker</span><span class="enlighter-g1">})</span><span class="enlighter-text">;</span></div></div><div class=""><div><span class="enlighter-text"></span><span class="enlighter-g1">}</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text"></span><span class="enlighter-k1">void</span><span class="enlighter-text"> </span><span class="enlighter-m0">loop</span><span class="enlighter-g1">()</span><span class="enlighter-text"> </span><span class="enlighter-g1">{</span><span class="enlighter-text"></span></div></div><div class=""><div><span class="enlighter-text">  esp_ai.</span><span class="enlighter-m3">loop</span><span class="enlighter-g1">()</span><span class="enlighter-text">; </span></div></div><div class=""><div><span class="enlighter-text">  </span></div></div><div class=""><div><span class="enlighter-text"></span><span class="enlighter-g1">}</span></div></div></div><pre class="enlighter-raw">#include &lt;esp-ai.h&gt;
+
+ESP_AI esp_ai;
+ 
+
+void setup() {
+  Serial.begin(115200);
+  // [必  填] 是否调试模式， 会输出更多信息
+  bool debug = true;
+  // [必  填] wifi 配置： { wifi 账号， wifi 密码 }  注意：要用双引号！
+  ESP_AI_wifi_config wifi_config = { "Xiaomi_FANFAN", "yangfan0522", "ESP-AI"  };
+  // 用开发者平台，只需要配置为空
+  //ESP_AI_server_config server_config = { };
+  // [必  填] 服务配置： { 服务IP， 服务端口, "请求参数，用多个参数&amp;号分割" }
+  ESP_AI_server_config server_config = { "192.168.31.108", 8088, "api-key=your_api_key&amp;p2=test" };
+  // [必  填] 离线唤醒方案：{ 方案, 识别阈值 }, "edge_impulse" | "diy"，为 "diy" 时可调用 esp_ai.wakeUp() 方法进行唤醒
+
+  ESP_AI_wake_up_config wake_up_config = {};
+  strcpy(wake_up_config.wake_up_scheme, "asrpro");  // 唤醒方案
+  strcpy(wake_up_config.str, "start");              // 串口和天问asrpro 唤醒时需要配置的字符串，也就是从另一个开发版发送来的字符串
+  // strcpy(wake_up_config.threshold,  0.95);  //  内置语音唤醒时需要配置 唤醒阈值 0-1
+  //strcpy(wake_up_config.str, "10");  // 引脚高低电平唤醒时需要的引脚IO
+
+  // [可留空] 麦克风引脚配置：{ bck_io_num, ws_io_num, data_in_num }
+  ESP_AI_i2s_config_mic i2s_config_mic = { 4, 5, 6 };
+  // [可留空] 扬声器引脚配置：{ bck_io_num, ws_io_num, data_in_num, 采样率 }
+  ESP_AI_i2s_config_speaker i2s_config_speaker = { 16, 17, 15, 16000 };
+  // [可留空] 音量调节配置：{ 输入引脚，输入最大值(1024|4096)，默认音量(0-1) }
+  ESP_AI_volume_config volume_config = { 34, 4096, 1 };
+  // 开始运行 ESP-AI 
+  esp_ai.begin({debug, wifi_config, server_config, wake_up_config, volume_config, i2s_config_mic, i2s_config_speaker});
+}
+
+void loop() {
+  esp_ai.loop(); 
+  
+}</pre></div><code class="gl enlighter-origin">#include &lt;esp-ai.h&gt;
+
+ESP_AI esp_ai;
+ 
+
+void setup() {
+  Serial.begin(115200);
+  // [必  填] 是否调试模式， 会输出更多信息
+  bool debug = true;
+  // [必  填] wifi 配置： { wifi 账号， wifi 密码 }  注意：要用双引号！
+  ESP_AI_wifi_config wifi_config = { "Xiaomi_FANFAN", "yangfan0522", "ESP-AI"  };
+  // 用开发者平台，只需要配置为空
+  //ESP_AI_server_config server_config = { };
+  // [必  填] 服务配置： { 服务IP， 服务端口, "请求参数，用多个参数&amp;号分割" }
+  ESP_AI_server_config server_config = { "192.168.31.108", 8088, "api-key=your_api_key&amp;p2=test" };
+  // [必  填] 离线唤醒方案：{ 方案, 识别阈值 }, "edge_impulse" | "diy"，为 "diy" 时可调用 esp_ai.wakeUp() 方法进行唤醒
+
+  ESP_AI_wake_up_config wake_up_config = {};
+  strcpy(wake_up_config.wake_up_scheme, "asrpro");  // 唤醒方案
+  strcpy(wake_up_config.str, "start");              // 串口和天问asrpro 唤醒时需要配置的字符串，也就是从另一个开发版发送来的字符串
+  // strcpy(wake_up_config.threshold,  0.95);  //  内置语音唤醒时需要配置 唤醒阈值 0-1
+  //strcpy(wake_up_config.str, "10");  // 引脚高低电平唤醒时需要的引脚IO
+
+  // [可留空] 麦克风引脚配置：{ bck_io_num, ws_io_num, data_in_num }
+  ESP_AI_i2s_config_mic i2s_config_mic = { 4, 5, 6 };
+  // [可留空] 扬声器引脚配置：{ bck_io_num, ws_io_num, data_in_num, 采样率 }
+  ESP_AI_i2s_config_speaker i2s_config_speaker = { 16, 17, 15, 16000 };
+  // [可留空] 音量调节配置：{ 输入引脚，输入最大值(1024|4096)，默认音量(0-1) }
+  ESP_AI_volume_config volume_config = { 34, 4096, 1 };
+  // 开始运行 ESP-AI 
+  esp_ai.begin({debug, wifi_config, server_config, wake_up_config, volume_config, i2s_config_mic, i2s_config_speaker});
+}
+
+void loop() {
+  esp_ai.loop(); 
+  
+}</code></pre>
+<p>简单的解释一下，开发板和我选择的一样，服务端填这里的信息</p>
+<p><img decoding="async" src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918202817230-image.png" data-src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918202817230-image.png" alt="20240918202817230-image" data-edit-file-id="2269" data-full-url="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918202817230-image.png" class="ls-is-cached lazyloaded lazyloadafter" imgbox-index="10"></p>
+<p>编译上传</p>
+<p><img decoding="async" src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918203646141-image.png" data-src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918203646141-image.png" alt="20240918203646141-image" data-edit-file-id="2271" data-full-url="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918203646141-image.png" class="ls-is-cached lazyloaded lazyloadafter" imgbox-index="11"></p>
+<p>这样就表示成功了，同时你会听到“后台连接成功”</p>
+<p><img decoding="async" src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918204022109-image.png" data-src="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918204022109-image.png" alt="20240918204022109-image" data-edit-file-id="2272" data-full-url="https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918204022109-image.png" class="ls-is-cached lazyloaded lazyloadafter" imgbox-index="12"></p>
+<div class="auth-info" data-v-ca047580="">
+<div class="value" data-v-ca047580="">&nbsp;</div>
+</div>
+</div><div class="score-box single-footer text-center"><div class="score-btns"><a href="javascript:;" class="btn-score extra signin-loader" data-id="2312"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-extra-points"></use></svg></a><text>评分</text><a href="javascript:;" class="btn-score deduct signin-loader" data-id="2312"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-deduct-points"></use></svg></a></div><div class="score-box-detail"><div class="desc em09 muted-3-color mt6 mb10">欢迎为Ta评分</div></div></div><div class="forum-article-footer flex ac jsb mb10 footer-actions"><div class="left flex ac"><a href="javascript:;" data-toggle="modal" data-target="#rewards-modal-1" data-remote="https://www.qingningz.cn/wp-admin/admin-ajax.php?id=1&amp;action=user_rewards_modal" class="rewards item"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-money"></use></svg><text>赞赏</text></a></div><div class="right flex ac"><span class="hover-show dropup btn-share item">
+        <svg class="icon" aria-hidden="true"><use xlink:href="#icon-share"></use></svg><text>分享</text><div class="zib-widget hover-show-con share-button dropdown-menu"><div><a rel="nofollow" class="share-btn qzone" target="_blank" title="QQ空间" href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=https://www.qingningz.cn/forum-post/2312.html&amp;title=ESP-AI成神之路——服务端自建复刻-青柠博客&amp;pics=https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918192326216-image.png&amp;summary=服务端搭建说明 搭建之前必须满足两点 nodejs版本：v18.20.4 npm&nbsp; &nbsp;版本：9.3.1 如果你的npm版本不是9.3.1，请用下面命令安装以下 npm install -g npm@9.3.1 --registry=https://registry.npm.taobao.org --strict-ssl=false 创建配置文件 随便创建一个文件夹，并在这个文件夹里创建index.js，比如我创建了一个espai文件夹 我们用vscode打开目..."><icon><svg class="icon" aria-hidden="true"><use xlink:href="#icon-qzone-color"></use></svg></icon><text>QQ空间<text></text></text></a><a rel="nofollow" class="share-btn weibo" target="_blank" title="微博" href="https://service.weibo.com/share/share.php?url=https://www.qingningz.cn/forum-post/2312.html&amp;title=ESP-AI成神之路——服务端自建复刻-青柠博客&amp;pic=https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918192326216-image.png&amp;searchPic=false"><icon><svg class="icon" aria-hidden="true"><use xlink:href="#icon-weibo-color"></use></svg></icon><text>微博<text></text></text></a><a rel="nofollow" class="share-btn qq" target="_blank" title="QQ好友" href="https://connect.qq.com/widget/shareqq/index.html?url=https://www.qingningz.cn/forum-post/2312.html&amp;title=ESP-AI成神之路——服务端自建复刻-青柠博客&amp;pics=https://zhuxiaohuan-1252924679.cos.ap-nanjing.myqcloud.com/wp/2024/09/20240918192326216-image.png&amp;desc=服务端搭建说明 搭建之前必须满足两点 nodejs版本：v18.20.4 npm&nbsp; &nbsp;版本：9.3.1 如果你的npm版本不是9.3.1，请用下面命令安装以下 npm install -g npm@9.3.1 --registry=https://registry.npm.taobao.org --strict-ssl=false 创建配置文件 随便创建一个文件夹，并在这个文件夹里创建index.js，比如我创建了一个espai文件夹 我们用vscode打开目..."><icon><svg class="icon" aria-hidden="true"><use xlink:href="#icon-qq-color"></use></svg></icon><text>QQ好友<text></text></text></a><a rel="nofollow" class="share-btn poster" poster-share="2312" title="海报分享" href="javascript:;"><icon><svg class="icon" aria-hidden="true"><use xlink:href="#icon-poster-color"></use></svg></icon><text>海报分享<text></text></text></a><a rel="nofollow" class="share-btn copy" data-clipboard-text="https://www.qingningz.cn/forum-post/2312.html" data-clipboard-tag="链接" title="复制链接" href="javascript:;"><icon><svg class="icon" aria-hidden="true"><use xlink:href="#icon-copy-color"></use></svg></icon><text>复制链接<text></text></text></a></div></div></span><a href="javascript:;" class="btn-favorite item signin-loader" data-id="2312"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-favorite"></use></svg><text>收藏</text></a></div></div></article>
